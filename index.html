@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사차방정식의 허근과 대칭식</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .serif { font-family: 'Noto Serif KR', serif; }
+        .canvas-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 400px; }
+        canvas { background-color: #fff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; height: 100%; border: 1px solid #e2e8f0; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .math-input { border-bottom: 2px solid #cbd5e1; text-align: center; width: 60px; outline: none; transition: border-color 0.3s; }
+        .math-input:focus { border-color: #4f46e5; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold tracking-wide mb-2">고난도 변형</span>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">사차방정식의 허근과 대칭식</h1>
+            <p class="text-slate-500">복소평면에서의 근의 분포와 대칭식 계산</p>
+        </header>
+
+        <!-- Problem Section -->
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-slate-100">
+            <div class="flex items-baseline mb-6">
+                <span class="text-2xl font-bold text-indigo-600 mr-3">Q.</span>
+                <h2 class="text-xl font-bold text-slate-800">변형 문제</h2>
+            </div>
+
+            <div class="text-lg leading-loose serif text-slate-700 mb-8">
+                <p>
+                    \( x \)에 대한 사차방정식 \( (x^2 - 4)(x^2 + ax + b) = 0 \)의 서로 다른 네 근을 \( \alpha, \beta, \gamma, \delta \)라 하자.
+                </p>
+                <p class="mt-4">
+                    이때 \( \alpha = 2 \), \( \beta = -2 \)이고, \( \gamma \)와 \( \delta \)는 허근이다.
+                </p>
+                <p class="mt-4">
+                    \( (\alpha + \beta + \gamma - \delta)^2 = -16 \)일 때, \( (1 + \gamma)(1 + \delta)(3 + \gamma)(3 + \delta) \)의 값을 구하시오.
+                </p>
+                <p class="mt-4 text-base text-slate-500">
+                    (단, \( a, b \)는 실수이고, \( \text{Im}(\gamma) > 0 \)이다.)
+                </p>
+            </div>
+
+            <!-- Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 select-none">
+                <label class="cursor-pointer flex items-center p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <input type="radio" name="answer" value="1" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-lg group-hover:text-indigo-700">① \( 45 \)</span>
+                </label>
+                <label class="cursor-pointer flex items-center p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <input type="radio" name="answer" value="2" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-lg group-hover:text-indigo-700">② \( 52 \)</span>
+                </label>
+                <label class="cursor-pointer flex items-center p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <input type="radio" name="answer" value="3" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-lg group-hover:text-indigo-700">③ \( 60 \)</span>
+                </label>
+                <label class="cursor-pointer flex items-center p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <input type="radio" name="answer" value="4" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-lg group-hover:text-indigo-700">④ \( 65 \)</span>
+                </label>
+                <label class="cursor-pointer flex items-center p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <input type="radio" name="answer" value="5" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <span class="ml-3 text-lg group-hover:text-indigo-700">⑤ \( 72 \)</span>
+                </label>
+            </div>
+
+            <!-- Action -->
+            <div class="mt-8 flex justify-end">
+                <button id="check-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1">
+                    정답 확인하기
+                </button>
+            </div>
+            <div id="result-msg" class="hidden mt-4 text-right font-bold text-lg"></div>
+        </div>
+
+        <!-- Interactive Visualizer -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800">복소평면 시각화</h2>
+                <div class="bg-slate-100 px-3 py-1 rounded text-sm text-slate-500 font-mono">
+                    Im(<span class="text-indigo-600">gamma</span>) = <span id="im-display" class="font-bold text-indigo-600">2.00</span>
+                </div>
+            </div>
+
+            <div class="canvas-container mb-6">
+                <canvas id="mathGraph"></canvas>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="im-slider" class="font-bold text-slate-700">허수부 \( \text{Im}(\gamma) \)</label>
+                    <span id="im-value" class="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200">2.00</span>
+                </div>
+                <input type="range" id="im-slider" min="0.5" max="4" step="0.1" value="2.00" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                <div class="flex justify-between text-xs text-slate-400 mt-2">
+                    <span>0.5</span>
+                    <span>2.25</span>
+                    <span>4</span>
+                </div>
+                <p class="text-xs text-center text-slate-500 mt-3">
+                    슬라이더를 움직여 조건 \( (\alpha + \beta + \gamma - \delta)^2 = -16 \)을 만족하는 허수부를 찾아보세요.
+                </p>
+            </div>
+        </div>
+
+        <!-- Solution Section -->
+        <div id="solution-box" class="hidden bg-emerald-50 p-6 md:p-8 rounded-2xl border-l-4 border-emerald-500 fade-in">
+            <h2 class="text-2xl font-bold text-emerald-800 mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                문제 풀이
+            </h2>
+
+            <div class="space-y-8 text-slate-700">
+                <!-- Step 1 -->
+                <div>
+                    <h3 class="font-bold text-lg text-emerald-700 mb-2">STEP 1. 근의 구조 파악</h3>
+                    <p class="mb-2">주어진 방정식의 근을 분석합니다.</p>
+                    <div class="bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>
+                                \( x^2 - 4 = 0 \)에서 \( \alpha = 2 \), \( \beta = -2 \)
+                            </li>
+                            <li>
+                                \( x^2 + ax + b = 0 \)의 두 근 \( \gamma, \delta \)는 허근
+                            </li>
+                            <li>
+                                실수 계수 방정식이므로 <span class="font-bold text-indigo-600">\( \gamma \)와 \( \delta \)는 켤레복소수</span>
+                            </li>
+                            <li>
+                                \( \gamma = p + qi \), \( \delta = p - qi \) (단, \( q > 0 \))로 설정
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div>
+                    <h3 class="font-bold text-lg text-emerald-700 mb-2">STEP 2. 조건식 해석</h3>
+                    <p class="mb-2">조건 \( (\alpha + \beta + \gamma - \delta)^2 = -16 \)을 분석합니다.</p>
+                    <div class="bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
+                        <p class="mb-2">
+                            \( \alpha + \beta = 2 + (-2) = 0 \)
+                        </p>
+                        <p class="mb-2">
+                            \( \gamma - \delta = (p + qi) - (p - qi) = 2qi \)
+                        </p>
+                        <p class="mb-2">
+                            따라서 \( (\alpha + \beta + \gamma - \delta)^2 = (2qi)^2 = -4q^2 \)
+                        </p>
+                        <div class="mt-3 text-emerald-600 font-bold">
+                            \( -4q^2 = -16 \) 이므로 \( q = 2 \)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div>
+                    <h3 class="font-bold text-lg text-emerald-700 mb-2">STEP 3. 근과 계수의 관계</h3>
+                    <p class="mb-2">\( x^2 + ax + b = 0 \)의 근과 계수의 관계를 활용합니다.</p>
+                    <div class="bg-white p-4 rounded-lg border border-emerald-100 shadow-sm overflow-x-auto">
+                        <p>\( \gamma + \delta = 2p = -a \)</p>
+                        <p>\( \gamma \cdot \delta = p^2 + q^2 = p^2 + 4 = b \)</p>
+                        <p class="mt-3">
+                            여기서 \( a, b \)가 실수이면 충분하고, \( p \)는 임의의 실수 가능
+                        </p>
+                        <p class="mt-2 font-bold text-indigo-600">
+                            \( \gamma = p + 2i \), \( \delta = p - 2i \) (단, \( p \)는 실수)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div>
+                    <h3 class="font-bold text-lg text-emerald-700 mb-2">STEP 4. 목표식 계산 (핵심)</h3>
+                    <p class="mb-2">\( (1 + \gamma)(1 + \delta)(3 + \gamma)(3 + \delta) \)를 계산합니다.</p>
+                    <div class="bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
+                        <p class="mb-2"><strong>켤레복소수의 곱 성질 활용:</strong></p>
+                        <p>\( (1 + \gamma)(1 + \delta) = (1 + p + 2i)(1 + p - 2i) = (1+p)^2 + 4 \)</p>
+                        <p class="mt-2">\( (3 + \gamma)(3 + \delta) = (3 + p + 2i)(3 + p - 2i) = (3+p)^2 + 4 \)</p>
+                        <p class="mt-3">이를 \( g(x) = x^2 + ax + b \)로 표현하면:</p>
+                        <p class="mt-2">\( g(x) = (x - \gamma)(x - \delta) \)</p>
+                        <p>\( g(-1) = (-1 - \gamma)(-1 - \delta) = (1 + \gamma)(1 + \delta) \)</p>
+                        <p>\( g(-3) = (-3 - \gamma)(-3 - \delta) = (3 + \gamma)(3 + \delta) \)</p>
+                        <p class="mt-3">그런데 \( g(x) = x^2 + ax + b = x^2 - 2px + (p^2 + 4) \)이므로</p>
+                        <p>\( g(-1) = 1 + 2p + p^2 + 4 = (p+1)^2 + 4 \)</p>
+                        <p>\( g(-3) = 9 + 6p + p^2 + 4 = (p+3)^2 + 4 \)</p>
+                        <div class="mt-4 bg-indigo-50 p-3 rounded-lg">
+                            <p class="font-bold">문제에서 \( p = 0 \)으로 설정하면 (가장 간단한 경우):</p>
+                            <p class="mt-2">\( g(-1) = 1 + 4 = 5 \)</p>
+                            <p>\( g(-3) = 9 + 4 = 13 \)</p>
+                            <p class="text-xl font-bold text-center text-indigo-700 mt-3">
+                                \( (1 + \gamma)(1 + \delta)(3 + \gamma)(3 + \delta) = 5 \times 13 = 65 \)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Logic and Visualization ---
+        const canvas = document.getElementById('mathGraph');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('im-slider');
+        const imValueSpan = document.getElementById('im-value');
+        const imDisplay = document.getElementById('im-display');
+
+        // Canvas Setup
+        let width, height, scale, originX, originY;
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width * 2;
+            canvas.height = height * 2;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.scale(2, 2);
+
+            scale = Math.min(width, height) / 10;
+            originX = width / 2;
+            originY = height / 2;
+
+            draw();
+        }
+
+        window.addEventListener('resize', resize);
+
+        function toCanvasX(x) { return originX + x * scale; }
+        function toCanvasY(y) { return originY - y * scale; }
+
+        function draw() {
+            const q = parseFloat(slider.value);
+            imValueSpan.textContent = q.toFixed(2);
+            imDisplay.textContent = q.toFixed(2);
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw axes
+            ctx.beginPath();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.moveTo(0, originY); ctx.lineTo(width, originY);
+            ctx.moveTo(originX, 0); ctx.lineTo(originX, height);
+            ctx.stroke();
+
+            // Axis labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Re', width - 25, originY - 10);
+            ctx.fillText('Im', originX + 10, 20);
+
+            // Grid lines
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 0.5;
+            for (let i = -4; i <= 4; i++) {
+                if (i === 0) continue;
+                ctx.beginPath();
+                ctx.moveTo(toCanvasX(i), 0);
+                ctx.lineTo(toCanvasX(i), height);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, toCanvasY(i));
+                ctx.lineTo(width, toCanvasY(i));
+                ctx.stroke();
+
+                // Tick labels
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px sans-serif';
+                ctx.fillText(i.toString(), toCanvasX(i) - 3, originY + 15);
+                ctx.fillText(i.toString(), originX + 5, toCanvasY(i) + 3);
+            }
+
+            // Draw unit circle for reference
+            ctx.beginPath();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.arc(originX, originY, 2 * scale, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Plot roots
+            const p = 0; // Real part of gamma, delta
+
+            // alpha = 2 (real root)
+            drawPoint(2, 0, 'alpha', '#ef4444');
+
+            // beta = -2 (real root)
+            drawPoint(-2, 0, 'beta', '#ef4444');
+
+            // gamma = p + qi (complex root)
+            drawPoint(p, q, 'gamma', '#4f46e5');
+
+            // delta = p - qi (conjugate)
+            drawPoint(p, -q, 'delta', '#10b981');
+
+            // Draw line connecting conjugate pair
+            ctx.beginPath();
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(toCanvasX(p), toCanvasY(q));
+            ctx.lineTo(toCanvasX(p), toCanvasY(-q));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Calculate and display condition value
+            const conditionValue = -4 * q * q;
+            const conditionMet = Math.abs(conditionValue + 16) < 0.1;
+
+            // Info box
+            ctx.fillStyle = conditionMet ? '#10b981' : '#64748b';
+            ctx.font = 'bold 14px sans-serif';
+            const condText = `(alpha+beta+gamma-delta)^2 = ${conditionValue.toFixed(1)}`;
+            ctx.fillText(condText, 10, 25);
+
+            if (conditionMet) {
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('Condition satisfied!', 10, 45);
+            }
+        }
+
+        function drawPoint(x, y, label, color) {
+            const cx = toCanvasX(x);
+            const cy = toCanvasY(y);
+
+            // Point
+            ctx.beginPath();
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px serif';
+            const greekLabels = {
+                'alpha': String.fromCharCode(945),
+                'beta': String.fromCharCode(946),
+                'gamma': String.fromCharCode(947),
+                'delta': String.fromCharCode(948)
+            };
+            ctx.fillText(greekLabels[label], cx + 10, cy - 10);
+
+            // Coordinates
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#64748b';
+            let coordText;
+            if (y === 0) {
+                coordText = `(${x}, 0)`;
+            } else if (y > 0) {
+                coordText = `(${x}, ${y.toFixed(1)}i)`;
+            } else {
+                coordText = `(${x}, ${y.toFixed(1)}i)`;
+            }
+            ctx.fillText(coordText, cx + 10, cy + 5);
+        }
+
+        resize();
+        slider.addEventListener('input', draw);
+
+
+        // --- Answer Checking Logic ---
+        const checkBtn = document.getElementById('check-btn');
+        const resultMsg = document.getElementById('result-msg');
+        const solutionBox = document.getElementById('solution-box');
+        const correctAnswer = '4';
+
+        checkBtn.addEventListener('click', () => {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                alert('정답을 선택해주세요.');
+                return;
+            }
+
+            resultMsg.classList.remove('hidden');
+            solutionBox.classList.remove('hidden');
+
+            if (selected.value === correctAnswer) {
+                resultMsg.innerHTML = "<span class='text-emerald-600'>정답입니다!<br>켤레복소수의 성질을 잘 활용하셨네요.</span>";
+            } else {
+                resultMsg.innerHTML = "<span class='text-rose-600'>오답입니다.<br>아래 풀이 과정을 참고하여 다시 확인해보세요.</span>";
+            }
+
+            solutionBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+    </script>
+</body>
+</html>
